@@ -1,7 +1,6 @@
 import 'package:beatcounter/main.dart';
 import 'package:flutter/material.dart';
 
-//void main() => runApp(home_screen());
 
 class home_screen extends StatefulWidget {
   const home_screen({Key? key}) : super(key: key);
