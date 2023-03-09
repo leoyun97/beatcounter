@@ -45,8 +45,10 @@ class _home_screenState extends State<home_screen> {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length - 1;
-        clickTotal = [];
+        //clickTotal = [];
         underFive = false;
+      } else if(clickTotal.length >11){
+        clickRefresh();
       }
     } else if (clickB.length == 1) {
       isnullbpm = true;
