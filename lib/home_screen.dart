@@ -1,6 +1,5 @@
-import 'package:beatcounter/main.dart';
+//import 'package:beatcounter/main.dart';
 import 'package:flutter/material.dart';
-
 
 class home_screen extends StatefulWidget {
   const home_screen({Key? key}) : super(key: key);
@@ -12,6 +11,7 @@ class home_screen extends StatefulWidget {
 class _home_screenState extends State<home_screen> {
   var bpm;
   var bpermin;
+  bool isnullbpm = true;
   List clickB = [];
 
   void click_button() {
@@ -25,14 +25,12 @@ class _home_screenState extends State<home_screen> {
       Duration diffSec = endTime.difference(startTime);
       bpm = diffSec.inMilliseconds;
       bpermin = 60000 / bpm;
-      if (bpermin < 0) {
-        bpermin = 0;
-      }
-      ;
       bpermin = bpermin.ceil().toString();
       clickB.removeAt(0);
+      isnullbpm = false;
+    } else if (clickB.length == 1) {
+      isnullbpm = true;
     }
-    ;
 
     setState(() {});
   }
@@ -49,15 +47,16 @@ class _home_screenState extends State<home_screen> {
       home: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Text('Beat per Minute'),
+          title: const Text('Beat per Minute'),
         ),
-        body: Center(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  //color: Colors.red,
                   border: Border.all(
                     color: Colors.green,
                     style: BorderStyle.solid,
@@ -66,23 +65,21 @@ class _home_screenState extends State<home_screen> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Text(
-                  "${bpermin}",
-                  style: TextStyle(
+                  isnullbpm ? "0" : "$bpermin",
+                  style: const TextStyle(
                     fontSize: 100,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              Container(
-                child: IconButton(
-                  iconSize: 300,
-                  icon: const Icon(
-                    Icons.radio_button_checked_rounded,
-                    color: Colors.deepOrange,
-                  ),
-                  onPressed: click_button,
+              IconButton(
+                iconSize: 350,
+                icon: const Icon(
+                  Icons.monitor_heart_rounded,
+                  color: Color.fromARGB(255, 97, 61, 240),
                 ),
+                onPressed: click_button,
               ),
             ],
           ),
