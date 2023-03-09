@@ -11,10 +11,15 @@ class home_screen extends StatefulWidget {
 class _home_screenState extends State<home_screen> {
   var bpm;
   var bpermin;
-  bool isnullbpm = true;
+  int timesPermin = 0;
+  double eveFive = 0;
+  String eveFives = "";
+  bool isnullbpm = true; // 초기 입력값이 null일 경우
+  bool underFive = true;
   List clickB = [];
+  List clickTotal = [];
 
-  void click_button() {
+  void clickButton() {
     DateTime dt = DateTime.now();
     clickB.add(dt);
 
@@ -23,15 +28,49 @@ class _home_screenState extends State<home_screen> {
       DateTime endTime = DateTime.parse(clickB[1].toString());
 
       Duration diffSec = endTime.difference(startTime);
-      bpm = diffSec.inMilliseconds;
-      bpermin = 60000 / bpm;
-      bpermin = bpermin.ceil().toString();
-      clickB.removeAt(0);
+      bpm = diffSec.inMilliseconds; //밀리세컨으로 변환해서
+      bpermin = 60000 / bpm; //1분의 밀리세컨을 bpm으로 나눠서 횟수 구함
+      bpermin = bpermin.ceil().toString(); // ceil-> 반올림 함수 사용
+      clickB.removeAt(0); //배열에서 첫번째값을 삭제
       isnullbpm = false;
+
+      clickTotal.add(double.parse(bpermin));
+      if (clickTotal.length == 5) {
+        eveFive = clickTotal.reduce((value, element) => value + element) / 5;
+        eveFives = eveFive.ceil().toString();
+        timesPermin = clickTotal.length;
+        //clickTotal = [];
+        underFive = false;
+      } else if (clickTotal.length == 11) {
+        eveFive = clickTotal.reduce((value, element) => value + element) / 10;
+        eveFives = eveFive.ceil().toString();
+        timesPermin = clickTotal.length - 1;
+        clickTotal = [];
+        underFive = false;
+      }
     } else if (clickB.length == 1) {
       isnullbpm = true;
     }
 
+    print("$clickTotal");
+    print("$eveFives");
+    setState(() {});
+  }
+
+  void clickRefresh() {
+    setState(() {
+      bpm = null;
+      bpermin = null;
+      clickB = [];
+      clickTotal = [];
+      eveFive = 0;
+      eveFives = "";
+      isnullbpm = true;
+      underFive = true;
+    });
+  }
+
+  void showAlert() {
     setState(() {});
   }
 
@@ -48,12 +87,32 @@ class _home_screenState extends State<home_screen> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           title: const Text('Beat per Minute'),
+          backgroundColor: Colors.black,
+          actions: [
+            IconButton(
+              iconSize: 50,
+              onPressed: clickRefresh,
+              icon: const Icon(Icons.refresh),
+            ),
+            const SizedBox(
+              width: 30,
+            )
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Container(
+                child: Text(
+                  underFive ? "" : "$timesPermin회 평균: $eveFives회/분, 정상입니다.",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
               Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -79,7 +138,7 @@ class _home_screenState extends State<home_screen> {
                   Icons.monitor_heart_rounded,
                   color: Color.fromARGB(255, 97, 61, 240),
                 ),
-                onPressed: click_button,
+                onPressed: clickButton,
               ),
             ],
           ),

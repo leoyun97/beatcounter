@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 void main() {
-  runApp(home_screen());
+  runApp(const home_screen());
 }
 
 
