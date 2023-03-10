@@ -21,6 +21,7 @@ class _home_screenState extends State<home_screen> {
   bool underFive = true;
   List clickB = [];
   List clickTotal = [];
+  Color txtColor = Color.fromARGB(249, 162, 239, 180);
 
   void clickButton() {
     DateTime dt = DateTime.now();
@@ -44,24 +45,32 @@ class _home_screenState extends State<home_screen> {
         timesPermin = clickTotal.length;
         //clickTotal = [];
         underFive = false;
-        if (eveFive < 25) {
+        if (eveFive <= 25) {
           txtChange = "정상입니다";
-        } else if (eveFive > 25 && eveFive < 35) {
-          txtChange = "높습니다.";
-        } else if (eveFive > 35) {
-          txtChange = "위험! 병원으로 연락주세요.";
+          txtColor = Color.fromARGB(249, 162, 239, 180);
+        } else if (eveFive > 25 && eveFive <= 30) {
+          txtChange = "높습니다. 매일측정권장";
+          txtColor = Color.fromARGB(248, 236, 144, 73);
+        } else if (eveFive > 30) {
+          txtChange = "주의! 병원으로 연락하세요.";
+          txtColor = Color.fromARGB(248, 245, 55, 84);
         }
       } else if (clickTotal.length == 11) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length - 1;
         //clickTotal = [];
-        if (eveFive > 25 && eveFive < 35) {
-          txtChange = "높습니다.";
-        } else if (eveFive > 35) {
-          txtChange = "위험! 병원으로 연락주세요.";
-        }
         underFive = false;
+        if (eveFive <= 25) {
+          txtChange = "정상입니다";
+          txtColor = Color.fromARGB(249, 162, 239, 180);
+        } else if (eveFive > 25 && eveFive <= 30) {
+          txtChange = "높습니다. 매일측정권장";
+          txtColor = Color.fromARGB(248, 236, 144, 73);
+        } else if (eveFive > 30) {
+          txtChange = "주의! 병원으로 연락하세요.";
+          txtColor = Color.fromARGB(248, 245, 55, 84);
+        }
       } else if (clickTotal.length > 11) {
         clickRefresh();
       }
@@ -69,8 +78,6 @@ class _home_screenState extends State<home_screen> {
       isnullbpm = true;
     }
 
-    print("$clickTotal");
-    print("$eveFives");
     setState(() {});
   }
 
@@ -85,10 +92,6 @@ class _home_screenState extends State<home_screen> {
       isnullbpm = true;
       underFive = true;
     });
-  }
-
-  void showAlert() {
-    setState(() {});
   }
 
   @override
@@ -117,45 +120,77 @@ class _home_screenState extends State<home_screen> {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                child: Text(
-                  underFive ? "" : "$timesPermin회 평균: $eveFives회/분, $txtChange",
-                  style: const TextStyle(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    underFive
+                        ? ""
+                        : "$timesPermin회 평균: $eveFives회/분, $txtChange",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: txtColor,
+                      fontSize: 20,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.save_alt_rounded),
                     color: Colors.white,
-                    fontSize: 20,
+                    iconSize: 50,
                   ),
-                ),
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.green.withOpacity(0.6),
+                        style: BorderStyle.solid,
+                        width: 10,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Text(
+                      isnullbpm ? "0" : "$bpermin",
+                      style: const TextStyle(
+                        fontSize: 100,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.green,
-                    style: BorderStyle.solid,
-                    width: 10,
+              Column(
+                children: [
+                  Transform.translate(
+                    offset: Offset(0, 190),
+                    child: Text(
+                      'TAP',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 200, 188, 188)
+                            .withOpacity(0.5),
+                        fontSize: 100,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Text(
-                  isnullbpm ? "0" : "$bpermin",
-                  style: const TextStyle(
-                    fontSize: 100,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  Transform.translate(
+                    offset: const Offset(0, -50),
+                    child: IconButton(
+                      iconSize: 350,
+                      icon: Icon(
+                        Icons.monitor_heart_rounded,
+                        color:
+                            Color.fromARGB(255, 241, 128, 137).withOpacity(0.5),
+                      ),
+                      onPressed: clickButton,
+                    ),
                   ),
-                ),
-              ),
-              IconButton(
-                iconSize: 350,
-                icon: const Icon(
-                  Icons.monitor_heart_rounded,
-                  color: Color.fromARGB(255, 97, 61, 240),
-                ),
-                onPressed: clickButton,
+                ],
               ),
             ],
           ),
