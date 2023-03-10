@@ -1,4 +1,6 @@
 //import 'package:beatcounter/main.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class home_screen extends StatefulWidget {
@@ -11,6 +13,7 @@ class home_screen extends StatefulWidget {
 class _home_screenState extends State<home_screen> {
   var bpm;
   var bpermin;
+  String txtChange = "정상입니다.";
   int timesPermin = 0;
   double eveFive = 0;
   String eveFives = "";
@@ -41,13 +44,25 @@ class _home_screenState extends State<home_screen> {
         timesPermin = clickTotal.length;
         //clickTotal = [];
         underFive = false;
+        if (eveFive < 25) {
+          txtChange = "정상입니다";
+        } else if (eveFive > 25 && eveFive < 35) {
+          txtChange = "높습니다.";
+        } else if (eveFive > 35) {
+          txtChange = "위험! 병원으로 연락주세요.";
+        }
       } else if (clickTotal.length == 11) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length - 1;
         //clickTotal = [];
+        if (eveFive > 25 && eveFive < 35) {
+          txtChange = "높습니다.";
+        } else if (eveFive > 35) {
+          txtChange = "위험! 병원으로 연락주세요.";
+        }
         underFive = false;
-      } else if(clickTotal.length >11){
+      } else if (clickTotal.length > 11) {
         clickRefresh();
       }
     } else if (clickB.length == 1) {
@@ -108,7 +123,7 @@ class _home_screenState extends State<home_screen> {
             children: [
               Container(
                 child: Text(
-                  underFive ? "" : "$timesPermin회 평균: $eveFives회/분, 정상입니다.",
+                  underFive ? "" : "$timesPermin회 평균: $eveFives회/분, $txtChange",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
