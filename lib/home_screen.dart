@@ -119,17 +119,19 @@ class _home_screenState extends State<home_screen> {
             )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30.0),
+        body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     underFive
-                        ? ""
+                        ? "아래 버튼을 탭하세요."
                         : "$timesPermin회 평균: $eveFives회/분, $txtChange",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -137,11 +139,17 @@ class _home_screenState extends State<home_screen> {
                       fontSize: 20,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.save_alt_rounded),
-                    color: Colors.white,
-                    iconSize: 50,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Visibility(
+                    visible: true,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.save_alt_rounded),
+                      color: Colors.white,
+                      iconSize: 50,
+                    ),
                   ),
                   Container(
                     alignment: Alignment.center,
@@ -167,7 +175,7 @@ class _home_screenState extends State<home_screen> {
               Column(
                 children: [
                   Transform.translate(
-                    offset: Offset(0, 190),
+                    offset: const Offset(0, 110),
                     child: Text(
                       'TAP',
                       style: TextStyle(
@@ -179,13 +187,14 @@ class _home_screenState extends State<home_screen> {
                     ),
                   ),
                   Transform.translate(
-                    offset: const Offset(0, -50),
+                    offset: const Offset(0, -120),
                     child: IconButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       iconSize: 350,
                       icon: Icon(
                         Icons.monitor_heart_rounded,
-                        color:
-                            Color.fromARGB(255, 241, 128, 137).withOpacity(0.5),
+                        color: const Color.fromARGB(255, 241, 128, 137)
+                            .withOpacity(0.5),
                       ),
                       onPressed: clickButton,
                     ),
@@ -195,6 +204,11 @@ class _home_screenState extends State<home_screen> {
             ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationBar(items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'A'),
+          BottomNavigationBarItem(icon: Icon(Icons.forward), label: 'Next'),
+        ]),
       ),
     );
   }
