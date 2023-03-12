@@ -18,10 +18,11 @@ class _home_screenState extends State<home_screen> {
   double eveFive = 0;
   String eveFives = "";
   bool isnullbpm = true; // 초기 입력값이 null일 경우
+  Color btnVisible = Colors.white; // 저장버튼 보이기
   bool underFive = true;
   List clickB = [];
   List clickTotal = [];
-  Color txtColor = Color.fromARGB(249, 162, 239, 180);
+  Color txtColor = Colors.black.withOpacity(0.6);
 
   void clickButton() {
     DateTime dt = DateTime.now();
@@ -47,13 +48,16 @@ class _home_screenState extends State<home_screen> {
         underFive = false;
         if (eveFive <= 25) {
           txtChange = "정상입니다";
-          txtColor = Color.fromARGB(249, 162, 239, 180);
+          txtColor = Colors.black.withOpacity(0.6);
+          btnVisible = Colors.black;
         } else if (eveFive > 25 && eveFive <= 30) {
           txtChange = "높습니다. 매일측정권장";
-          txtColor = Color.fromARGB(248, 236, 144, 73);
+          txtColor = Colors.blue;
+          btnVisible = Colors.black;
         } else if (eveFive > 30) {
           txtChange = "주의! 병원으로 연락하세요.";
-          txtColor = Color.fromARGB(248, 245, 55, 84);
+          txtColor = const Color.fromARGB(248, 245, 55, 84);
+          btnVisible = Colors.black;
         }
       } else if (clickTotal.length == 11) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
@@ -63,13 +67,16 @@ class _home_screenState extends State<home_screen> {
         underFive = false;
         if (eveFive <= 25) {
           txtChange = "정상입니다";
-          txtColor = Color.fromARGB(249, 162, 239, 180);
+          txtColor = Colors.black.withOpacity(0.6);
+          btnVisible = Colors.black;
         } else if (eveFive > 25 && eveFive <= 30) {
           txtChange = "높습니다. 매일측정권장";
-          txtColor = Color.fromARGB(248, 236, 144, 73);
+          txtColor = txtColor = Colors.blue;
+          btnVisible = Colors.black;
         } else if (eveFive > 30) {
           txtChange = "주의! 병원으로 연락하세요.";
-          txtColor = Color.fromARGB(248, 245, 55, 84);
+          txtColor = const Color.fromARGB(248, 245, 55, 84);
+          btnVisible = Colors.black;
         }
       } else if (clickTotal.length > 11) {
         clickRefresh();
@@ -91,6 +98,8 @@ class _home_screenState extends State<home_screen> {
       eveFives = "";
       isnullbpm = true;
       underFive = true;
+      txtColor = Colors.black.withOpacity(0.6);
+      btnVisible = Colors.white;
     });
   }
 
@@ -104,7 +113,7 @@ class _home_screenState extends State<home_screen> {
     return MaterialApp(
       title: 'SRR측정보조',
       home: Scaffold(
-        backgroundColor: Colors.black,
+        //backgroundColor: Colors.black,
         appBar: AppBar(
           title: const Text('Beat per Minute'),
           backgroundColor: Colors.black,
@@ -119,39 +128,32 @@ class _home_screenState extends State<home_screen> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const SizedBox(
-                    height: 20,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Text(
+                  underFive
+                      ? "아래 빨간 버튼을 호흡에 맞춰 탭하세요."
+                      : "$timesPermin회 평균: $eveFives회/분, $txtChange",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: txtColor,
+                    fontSize: 15,
                   ),
-                  Text(
-                    underFive
-                        ? "아래 버튼을 탭하세요."
-                        : "$timesPermin회 평균: $eveFives회/분, $txtChange",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: txtColor,
-                      fontSize: 20,
-                    ),
+                ),
+                Visibility(
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.save_alt_rounded),
+                    color: btnVisible,
+                    iconSize: 30,
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Visibility(
-                    visible: true,
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.save_alt_rounded),
-                      color: Colors.white,
-                      iconSize: 50,
-                    ),
-                  ),
-                  Container(
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -164,45 +166,32 @@ class _home_screenState extends State<home_screen> {
                     child: Text(
                       isnullbpm ? "0" : "$bpermin",
                       style: const TextStyle(
-                        fontSize: 100,
+                        fontSize: 90,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
-                ],
-              ),
-              Column(
-                children: [
-                  Transform.translate(
-                    offset: const Offset(0, 110),
-                    child: Text(
-                      'TAP',
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 200, 188, 188)
-                            .withOpacity(0.5),
-                        fontSize: 100,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  iconSize: 300,
+                  icon: Icon(
+                    Icons.monitor_heart_rounded,
+                    weight: 0.1,
+                    color: const Color.fromARGB(255, 241, 128, 137)
+                        .withOpacity(0.6),
+
                   ),
-                  Transform.translate(
-                    offset: const Offset(0, -120),
-                    child: IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      iconSize: 350,
-                      icon: Icon(
-                        Icons.monitor_heart_rounded,
-                        color: const Color.fromARGB(255, 241, 128, 137)
-                            .withOpacity(0.5),
-                      ),
-                      onPressed: clickButton,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                  onPressed: clickButton,
+                ),
+              ],
+            ),
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
