@@ -1,6 +1,6 @@
 //import 'package:beatcounter/main.dart';
 import 'dart:math';
-import 'package:beatcounter/record_db.dart';
+import 'package:beatcounter/recordDb.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -108,9 +108,23 @@ class _home_screenState extends State<home_screen> {
     });
   }
 
-  void saveRc() {
-    //Navigator.push(
-    //    context, MaterialPageRoute(builder: (context) => record_db()),);
+  void insertRecord() {
+    DBHelper dbHelper = DBHelper();
+    dbHelper.insertRecord(
+      DayRecords(
+        id: 1,
+        whetSu: "23",
+        nalJja: '2023-01-02',
+      ),
+    );
+  }
+
+  void viewRecord() {
+    DBHelper dbHelper = DBHelper();
+    dbHelper.getAllRecord().then((value) => value.forEach((element) {
+          print(
+              'id:${element.id}\n 호흡수:${element.whetSu}\n 날짜:${element.nalJja}');
+        }));
   }
 
   @override
@@ -130,7 +144,7 @@ class _home_screenState extends State<home_screen> {
           actions: [
             IconButton(
               iconSize: 30,
-              onPressed: () {},
+              onPressed: viewRecord,
               icon: const Icon(Icons.access_alarm),
             ),
             IconButton(
@@ -160,7 +174,7 @@ class _home_screenState extends State<home_screen> {
                 ),
                 Visibility(
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: insertRecord,
                     icon: const Icon(Icons.save_alt_rounded),
                     color: btnVisible,
                     iconSize: 30,
