@@ -109,12 +109,14 @@ class _home_screenState extends State<home_screen> {
   }
 
   void insertRecord() {
+    DateTime dt = DateTime.now();
+
     DBHelper dbHelper = DBHelper();
     dbHelper.insertRecord(
       DayRecords(
-        id: 1,
-        whetSu: "23",
-        nalJja: '2023-01-02',
+        id: 2,
+        whetSu: bpermin,
+        nalJja: '${dt.toString()}',
       ),
     );
   }

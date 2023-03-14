@@ -75,6 +75,7 @@ class DBHelper {
     });
   }
 
+  //id에 해당하는 레코드보기
   Future<dynamic> getRecord(int id) async {
     final db = await database;
 
@@ -87,6 +88,7 @@ class DBHelper {
     return maps.isNotEmpty ? maps : null;
   }
 
+  //수정
   Future<void> updateRecord(DayRecords dayRecords) async {
     final db = await database;
 
@@ -98,6 +100,7 @@ class DBHelper {
     );
   }
 
+  //삭제
   Future<void> deleteRecord(int id) async {
     final db = await database;
 
@@ -107,4 +110,29 @@ class DBHelper {
       whereArgs: [id],
     );
   }
+  Future<int> getDBrawcount() async{
+    final db = await database;
+    var res = await db.rawQuery('SELECT COUNT (*) FROM $TableName');
+    int rawCount = res.length;   //Sqflite.firstIntValue(res);
+    return rawCount;
+  }
+
 }
+
+//특정 id에 해당하는 기록불러오기 -> 아래 주석부분을 실행하는곳(home_screen.dart)에 붙여넣기
+
+/*
+DBHelper dbHelper = DBHelper();
+
+dbHelper.getRecord(12).then((value) {
+if (value is List<Map<String, dynamic>>) {
+value.forEach((element) {
+element.forEach((key, value) {
+print('$key: $value');
+});
+});
+} else {
+print('null');
+}
+});
+*/
