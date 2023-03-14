@@ -1,7 +1,12 @@
 //import 'package:beatcounter/main.dart';
 import 'dart:math';
-
+import 'package:beatcounter/record_db.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class home_screen extends StatefulWidget {
   const home_screen({Key? key}) : super(key: key);
@@ -103,6 +108,11 @@ class _home_screenState extends State<home_screen> {
     });
   }
 
+  void saveRc() {
+    //Navigator.push(
+    //    context, MaterialPageRoute(builder: (context) => record_db()),);
+  }
+
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
@@ -118,6 +128,11 @@ class _home_screenState extends State<home_screen> {
           title: const Text('Beat per Minute'),
           backgroundColor: Colors.black,
           actions: [
+            IconButton(
+              iconSize: 30,
+              onPressed: () {},
+              icon: const Icon(Icons.access_alarm),
+            ),
             IconButton(
               iconSize: 50,
               onPressed: clickRefresh,
@@ -185,7 +200,6 @@ class _home_screenState extends State<home_screen> {
                     weight: 0.1,
                     color: const Color.fromARGB(255, 241, 128, 137)
                         .withOpacity(0.6),
-
                   ),
                   onPressed: clickButton,
                 ),
