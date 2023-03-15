@@ -110,13 +110,20 @@ class DBHelper {
       whereArgs: [id],
     );
   }
-  Future<int> getDBrawcount() async{
+
+  Future<void> deleteAllRecord() async {
     final db = await database;
-    var res = await db.rawQuery('SELECT COUNT (*) FROM $TableName');
-    int rawCount = res.length;   //Sqflite.firstIntValue(res);
-    return rawCount;
+    await db.delete("$TableName");
+    //await db.close();
   }
 
+  Future<String> getDBrawcount() async {
+    //int rawCount;
+    final db = await database;
+    var res = await db.rawQuery('SELECT COUNT (*) FROM $TableName');
+    String rawCount = Sqflite.firstIntValue(res).toString();
+    return rawCount;
+  }
 }
 
 //특정 id에 해당하는 기록불러오기 -> 아래 주석부분을 실행하는곳(home_screen.dart)에 붙여넣기

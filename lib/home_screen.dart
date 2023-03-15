@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
 
 class home_screen extends StatefulWidget {
   const home_screen({Key? key}) : super(key: key);
@@ -20,14 +21,16 @@ class _home_screenState extends State<home_screen> {
   var bpermin;
   String txtChange = "정상입니다.";
   int timesPermin = 0;
+  int rawCounts = 0; //데이터 수
   double eveFive = 0;
   String eveFives = "";
   bool isnullbpm = true; // 초기 입력값이 null일 경우
-  Color btnVisible = Colors.white; // 저장버튼 보이기
+  bool btnVisible = false; // 저장버튼 보이기
   bool underFive = true;
   List clickB = [];
   List clickTotal = [];
   Color txtColor = Colors.black.withOpacity(0.6);
+  final DBHelper dbHelper = DBHelper();
 
   void clickButton() {
     DateTime dt = DateTime.now();
@@ -49,47 +52,56 @@ class _home_screenState extends State<home_screen> {
         eveFive = clickTotal.reduce((value, element) => value + element) / 5;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length;
-        //clickTotal = [];
         underFive = false;
         if (eveFive <= 25) {
           txtChange = "정상입니다";
           txtColor = Colors.black.withOpacity(0.6);
-          btnVisible = Colors.black;
+          btnVisible = true;
         } else if (eveFive > 25 && eveFive <= 30) {
           txtChange = "높습니다. 매일측정권장";
           txtColor = Colors.blue;
-          btnVisible = Colors.black;
-        } else if (eveFive > 30) {
+          btnVisible = true;
+        } else if (eveFive > 30 && eveFive < 40) {
           txtChange = "주의! 병원으로 연락하세요.";
+          txtColor = const Color.fromARGB(248, 245, 55, 204);
+          btnVisible = true;
+        } else if (eveFive >= 40) {
+          txtChange = "경고! 병원으로 즉시 연락하세요.";
           txtColor = const Color.fromARGB(248, 245, 55, 84);
-          btnVisible = Colors.black;
+          btnVisible = true;
         }
-      } else if (clickTotal.length == 11) {
+      } else if (clickTotal.length == 6) {
+        btnVisible = false;
+      } else if (clickTotal.length == 10) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
-        timesPermin = clickTotal.length - 1;
+        timesPermin = clickTotal.length;
         //clickTotal = [];
         underFive = false;
         if (eveFive <= 25) {
           txtChange = "정상입니다";
           txtColor = Colors.black.withOpacity(0.6);
-          btnVisible = Colors.black;
+          btnVisible = true;
         } else if (eveFive > 25 && eveFive <= 30) {
           txtChange = "높습니다. 매일측정권장";
           txtColor = txtColor = Colors.blue;
-          btnVisible = Colors.black;
-        } else if (eveFive > 30) {
+          btnVisible = true;
+        } else if (eveFive > 30 && eveFive < 40) {
           txtChange = "주의! 병원으로 연락하세요.";
+          txtColor = const Color.fromARGB(248, 245, 55, 204);
+          btnVisible = true;
+        } else if (eveFive >= 40) {
+          txtChange = "경고! 병원으로 즉시 연락하세요.";
           txtColor = const Color.fromARGB(248, 245, 55, 84);
-          btnVisible = Colors.black;
+          btnVisible = true;
         }
-      } else if (clickTotal.length > 11) {
+      } else if (clickTotal.length > 10) {
         clickRefresh();
       }
     } else if (clickB.length == 1) {
       isnullbpm = true;
     }
-
+    //print(clickTotal.toList()); //Delete
     setState(() {});
   }
 
@@ -104,29 +116,44 @@ class _home_screenState extends State<home_screen> {
       isnullbpm = true;
       underFive = true;
       txtColor = Colors.black.withOpacity(0.6);
-      btnVisible = Colors.white;
+      btnVisible = false;
+
+      //dbHelper.deleteAllRecord();
     });
   }
 
-  void insertRecord() {
-    DateTime dt = DateTime.now();
+  void insertRecord() async {
+    DateTime now = DateTime.now();
+    String dt = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-    DBHelper dbHelper = DBHelper();
+    String rawCount = await dbHelper.getDBrawcount();
+    rawCounts = int.parse(rawCount);
+
     dbHelper.insertRecord(
       DayRecords(
-        id: 2,
+        id: rawCounts,
         whetSu: bpermin,
-        nalJja: '${dt.toString()}',
+        nalJja: dt,
       ),
     );
+    setState(() {
+      //btnVisible = false;
+      clickRefresh();
+    });
+  }
+
+  void deleteAllrecords() {
+    dbHelper.deleteAllRecord();
   }
 
   void viewRecord() {
-    DBHelper dbHelper = DBHelper();
+    //DBHelper dbHelper = DBHelper();
     dbHelper.getAllRecord().then((value) => value.forEach((element) {
           print(
               'id:${element.id}\n 호흡수:${element.whetSu}\n 날짜:${element.nalJja}');
         }));
+
+    //print('$rawCounts');
   }
 
   @override
@@ -141,22 +168,22 @@ class _home_screenState extends State<home_screen> {
       home: Scaffold(
         //backgroundColor: Colors.black,
         appBar: AppBar(
-          title: const Text('Beat per Minute'),
+          title: const Text(
+            'Beat per Minute',
+          ),
+          centerTitle: true,
           backgroundColor: Colors.black,
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.menu_rounded),
+            iconSize: 35,
+          ),
           actions: [
             IconButton(
-              iconSize: 30,
+              iconSize: 35,
               onPressed: viewRecord,
-              icon: const Icon(Icons.access_alarm),
+              icon: const Icon(Icons.list_alt),
             ),
-            IconButton(
-              iconSize: 50,
-              onPressed: clickRefresh,
-              icon: const Icon(Icons.refresh),
-            ),
-            const SizedBox(
-              width: 30,
-            )
           ],
         ),
         body: Column(
@@ -164,31 +191,14 @@ class _home_screenState extends State<home_screen> {
           children: [
             Column(
               children: [
-                Text(
-                  underFive
-                      ? "아래 빨간 버튼을 호흡에 맞춰 탭하세요."
-                      : "$timesPermin회 평균: $eveFives회/분, $txtChange",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: txtColor,
-                    fontSize: 15,
-                  ),
-                ),
-                Visibility(
-                  child: IconButton(
-                    onPressed: insertRecord,
-                    icon: const Icon(Icons.save_alt_rounded),
-                    color: btnVisible,
-                    iconSize: 30,
-                  ),
-                ),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.green.withOpacity(0.6),
+                        color:
+                            Color.fromARGB(255, 197, 198, 197).withOpacity(0.6),
                         style: BorderStyle.solid,
                         width: 10,
                       ),
@@ -203,6 +213,39 @@ class _home_screenState extends State<home_screen> {
                       ),
                     ),
                   ),
+                ),
+                Text(
+                  underFive
+                      ? "깊게 잠들었을 때 아래 버튼을 호흡에 맞춰 탭하세요."
+                      : "$timesPermin회 평균: $eveFives회/분, $txtChange",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: txtColor,
+                    fontSize: 18,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Visibility(
+                      maintainState: true,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      visible: btnVisible,
+                      child: IconButton(
+                        onPressed: insertRecord,
+                        icon: const Icon(Icons.save_alt_rounded),
+                        color: Colors.black,
+                        iconSize: 35,
+                      ),
+                    ),
+                    IconButton(
+                      color: Colors.black.withOpacity(0.6),
+                      iconSize: 50,
+                      onPressed: clickRefresh,
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -229,6 +272,33 @@ class _home_screenState extends State<home_screen> {
           BottomNavigationBarItem(icon: Icon(Icons.forward), label: 'Next'),
         ]),
       ),
+    );
+  }
+
+  Future<dynamic> showAlert(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Text('저장하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                insertRecord();
+              },
+              child: const Text('저장'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('취소'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
