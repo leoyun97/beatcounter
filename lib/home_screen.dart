@@ -1,9 +1,10 @@
 //import 'package:beatcounter/main.dart';
-import 'dart:math';
+//import 'dart:math';
+import 'package:beatcounter/list_screen.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -132,7 +133,7 @@ class _home_screenState extends State<home_screen> {
     dbHelper.insertRecord(
       DayRecords(
         id: rawCounts,
-        whetSu: bpermin,
+        whetSu: eveFives,
         nalJja: dt,
       ),
     );
@@ -156,6 +157,43 @@ class _home_screenState extends State<home_screen> {
     //print('$rawCounts');
   }
 
+  void gotoPage() {
+    Navigator.push(
+      this.context,
+      MaterialPageRoute(
+        builder: (context) => const ListScreenPage(),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
+  void showAlert() {
+    showDialog(
+      context: this.context,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Text('호흡수를 저장하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(this.context).pop();
+                insertRecord();
+              },
+              child: const Text('저장'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(this.context).pop();
+              },
+              child: const Text('취소'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
@@ -174,7 +212,7 @@ class _home_screenState extends State<home_screen> {
           centerTitle: true,
           backgroundColor: Colors.black,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () => gotoPage(),
             icon: Icon(Icons.menu_rounded),
             iconSize: 35,
           ),
@@ -233,7 +271,7 @@ class _home_screenState extends State<home_screen> {
                       maintainAnimation: true,
                       visible: btnVisible,
                       child: IconButton(
-                        onPressed: insertRecord,
+                        onPressed: () => showAlert(), //insertRecord,
                         icon: const Icon(Icons.save_alt_rounded),
                         color: Colors.black,
                         iconSize: 35,
@@ -272,33 +310,6 @@ class _home_screenState extends State<home_screen> {
           BottomNavigationBarItem(icon: Icon(Icons.forward), label: 'Next'),
         ]),
       ),
-    );
-  }
-
-  Future<dynamic> showAlert(BuildContext context) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext ctx) {
-        return AlertDialog(
-          content: Text('저장하시겠습니까?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                insertRecord();
-              },
-              child: const Text('저장'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('취소'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
