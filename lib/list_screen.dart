@@ -17,8 +17,6 @@ class _ListScreenPageState extends State<ListScreenPage> {
   //var items = List<String>.generate(100, (i) => 'Item $i');
   Future<List<DayRecords>> callAllrecord() async {
     chartData = await dbHelper.getAllRecord();
-    if (chartData == null) {
-    } else {}
     return chartData;
   }
 
