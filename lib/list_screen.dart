@@ -12,8 +12,7 @@ class ListScreenPage extends StatefulWidget {
 class _ListScreenPageState extends State<ListScreenPage> {
   final DBHelper dbHelper = DBHelper();
 
-  var items = List<String>.generate(100, (i) => 'Item $i');
-
+  //var items = List<String>.generate(100, (i) => 'Item $i');
   Future<List<DayRecords>> callAllrecord() async {
     return await dbHelper.getAllRecord();
   }
@@ -21,11 +20,12 @@ class _ListScreenPageState extends State<ListScreenPage> {
   Widget callListBuilder() {
     return FutureBuilder(
       builder: (context, projectSnap) {
-        if (projectSnap.hasData) {
+        if (projectSnap.data != null) {
           return ListView.builder(
             itemCount: projectSnap.data!.length,
             itemBuilder: (context, index) {
               DayRecords dayRecords = projectSnap.data![index];
+
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[

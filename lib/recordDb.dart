@@ -64,7 +64,9 @@ class DBHelper {
   Future<List<DayRecords>> getAllRecord() async {
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query('$TableName');
+    //final List<Map<String, dynamic>> maps = await db.query('$TableName');
+    final List<Map<String, dynamic>> maps =
+        await db.query('$TableName', orderBy: 'id DESC');
 
     return List.generate(maps.length, (i) {
       return DayRecords(
