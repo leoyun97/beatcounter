@@ -29,25 +29,27 @@ class _ListScreenPageState extends State<ListScreenPage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      dayRecords.id.toString(),
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.all(10),
+                  //   child: Text(
+                  //     dayRecords.id.toString(),
+                  //     style: TextStyle(fontSize: 20),
+                  //   ),
+                  // ),
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
                       dayRecords.nalJja.toString(),
-                      style: TextStyle(fontSize: 20),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
                       dayRecords.whetSu.toString(),
-                      style: TextStyle(fontSize: 20),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
@@ -73,6 +75,13 @@ class _ListScreenPageState extends State<ListScreenPage> {
           title: const Text(
             '호흡수 측정기록',
           ),
+          actions: [
+            IconButton(
+              iconSize: 35,
+              onPressed: () {},
+              icon: const Icon(Icons.delete),
+            ),
+          ],
           centerTitle: true,
           backgroundColor: Colors.black,
         ),
@@ -82,11 +91,17 @@ class _ListScreenPageState extends State<ListScreenPage> {
               padding: EdgeInsets.all(10),
               child: Text('Record List'),
             ),
-            Expanded(child: callListBuilder()),
+            Expanded(
+              child: callListBuilder(),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10),
+              child: Text('Record Graph'),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.backspace),
           onPressed: () {
             Navigator.of(this.context).pop();
           },

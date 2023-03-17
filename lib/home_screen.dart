@@ -27,7 +27,8 @@ class _home_screenState extends State<home_screen> {
   String eveFives = "";
   bool isnullbpm = true; // 초기 입력값이 null일 경우
   bool btnVisible = false; // 저장버튼 보이기
-  bool underFive = true;
+  bool btnVisibleRef = false;
+  bool underFive = true; // 깊이 잠들었을때 클릭하라는 멘트 보이기
   List clickB = [];
   List clickTotal = [];
   Color txtColor = Colors.black.withOpacity(0.6);
@@ -71,9 +72,9 @@ class _home_screenState extends State<home_screen> {
           txtColor = const Color.fromARGB(248, 245, 55, 84);
           btnVisible = true;
         }
-      } else if (clickTotal.length == 6) {
-        btnVisible = false;
-      } else if (clickTotal.length == 10) {
+      }
+      //else if (clickTotal.length == 6) {btnVisible = false;}
+      else if (clickTotal.length == 10) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length;
@@ -101,6 +102,7 @@ class _home_screenState extends State<home_screen> {
       }
     } else if (clickB.length == 1) {
       isnullbpm = true;
+      btnVisibleRef = true;
     }
     //print(clickTotal.toList()); //Delete
     setState(() {});
@@ -118,6 +120,7 @@ class _home_screenState extends State<home_screen> {
       underFive = true;
       txtColor = Colors.black.withOpacity(0.6);
       btnVisible = false;
+      btnVisibleRef = false;
 
       //dbHelper.deleteAllRecord();
     });
@@ -173,7 +176,7 @@ class _home_screenState extends State<home_screen> {
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          content: Text('호흡수를 저장하시겠습니까?'),
+          content: Text('$timesPermin회 평균 호흡수를 저장하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -207,20 +210,20 @@ class _home_screenState extends State<home_screen> {
         //backgroundColor: Colors.black,
         appBar: AppBar(
           title: const Text(
-            'Beat per Minute',
+            '호흡수 측정',
           ),
           centerTitle: true,
           backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () => gotoPage(),
-            icon: Icon(Icons.menu_rounded),
+            icon: Icon(Icons.list_alt),
             iconSize: 35,
           ),
           actions: [
             IconButton(
               iconSize: 35,
-              onPressed: viewRecord,
-              icon: const Icon(Icons.list_alt),
+              onPressed: () {},
+              icon: const Icon(Icons.list),
             ),
           ],
         ),
@@ -230,17 +233,17 @@ class _home_screenState extends State<home_screen> {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(30.0),
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color:
-                            Color.fromARGB(255, 197, 198, 197).withOpacity(0.6),
+                        color: const Color.fromARGB(255, 197, 198, 197)
+                            .withOpacity(0.6),
                         style: BorderStyle.solid,
                         width: 10,
                       ),
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Text(
                       isnullbpm ? "0" : "$bpermin",
@@ -259,7 +262,7 @@ class _home_screenState extends State<home_screen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: txtColor,
-                    fontSize: 18,
+                    fontSize: 16,
                   ),
                 ),
                 Row(
@@ -277,11 +280,17 @@ class _home_screenState extends State<home_screen> {
                         iconSize: 35,
                       ),
                     ),
-                    IconButton(
-                      color: Colors.black.withOpacity(0.6),
-                      iconSize: 50,
-                      onPressed: clickRefresh,
-                      icon: const Icon(Icons.refresh),
+                    Visibility(
+                      maintainAnimation: true,
+                      maintainSize: true,
+                      maintainState: true,
+                      visible: btnVisibleRef,
+                      child: IconButton(
+                        color: Colors.black.withOpacity(0.6),
+                        iconSize: 50,
+                        onPressed: () => clickRefresh(),
+                        icon: const Icon(Icons.refresh),
+                      ),
                     ),
                   ],
                 ),
