@@ -3,11 +3,11 @@
 import 'package:beatcounter/list_screen.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
+//import 'dart:async';
 //import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+//import 'package:flutter/gestures.dart';
+//import 'package:path/path.dart';
+//import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
 
 class home_screen extends StatefulWidget {
@@ -150,15 +150,7 @@ class _home_screenState extends State<home_screen> {
     dbHelper.deleteAllRecord();
   }
 
-  void viewRecord() {
-    //DBHelper dbHelper = DBHelper();
-    dbHelper.getAllRecord().then((value) => value.forEach((element) {
-          print(
-              'id:${element.id}\n 호흡수:${element.whetSu}\n 날짜:${element.nalJja}');
-        }));
 
-    //print('$rawCounts');
-  }
 
   void gotoPage() {
     Navigator.push(

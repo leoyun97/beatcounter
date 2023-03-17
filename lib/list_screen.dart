@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
-import 'package:flutter/src/rendering/box.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class ListScreenPage extends StatefulWidget {
   const ListScreenPage({super.key});
@@ -11,10 +12,25 @@ class ListScreenPage extends StatefulWidget {
 
 class _ListScreenPageState extends State<ListScreenPage> {
   final DBHelper dbHelper = DBHelper();
+  var chartData;
 
   //var items = List<String>.generate(100, (i) => 'Item $i');
   Future<List<DayRecords>> callAllrecord() async {
-    return await dbHelper.getAllRecord();
+    chartData = await dbHelper.getAllRecord();
+    if (chartData == null) {
+    } else {}
+    return chartData;
+  }
+
+  void viewRecord() {
+    dbHelper.getAllRecord().then(
+          (value) => value.forEach(
+            (element) {
+              print(
+                  'id:${element.id}\n 호흡수:${element.whetSu}\n 날짜:${element.nalJja}');
+            },
+          ),
+        );
   }
 
   Widget callListBuilder() {
@@ -37,19 +53,19 @@ class _ListScreenPageState extends State<ListScreenPage> {
                   //   ),
                   // ),
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Text(
                       dayRecords.nalJja.toString(),
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
                       dayRecords.whetSu.toString(),
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w400),
                     ),
                   ),
                 ],
@@ -57,9 +73,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
             },
           );
         } else {
-          return Container(
-            child: const Text('자료없음!'),
-          );
+          return const Text('자료없음!');
         }
       },
       future: callAllrecord(),
@@ -78,7 +92,9 @@ class _ListScreenPageState extends State<ListScreenPage> {
           actions: [
             IconButton(
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                print('${dbHelper.getAllRecord()}');
+              },
               icon: const Icon(Icons.delete),
             ),
           ],
@@ -94,10 +110,42 @@ class _ListScreenPageState extends State<ListScreenPage> {
             Expanded(
               child: callListBuilder(),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: Text('Record Graph'),
-            ),
+            SfCartesianChart(
+                // --------안되는 코드 시작
+                primaryXAxis: CategoryAxis(),
+                title: ChartTitle(text: 'SRR'),
+                legend: Legend(isVisible: true),
+                tooltipBehavior: TooltipBehavior(enable: true),
+                series: <ChartSeries<DayRecords, String>>[
+                  LineSeries<DayRecords, String>(
+                    dataSource: chartData!,
+                    xValueMapper: (DayRecords day, _) => day.nalJja,
+                    yValueMapper: (DayRecords count, _) =>
+                        int.parse(count.whetSu),
+                    name: '횟수',
+                    // Enable data label
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  ),
+                ]),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                //Initialize the spark charts widget
+                child: SfSparkLineChart.custom(
+                  //Enable the trackball
+                  trackball: const SparkChartTrackball(
+                      activationMode: SparkChartActivationMode.tap),
+                  //Enable marker
+                  marker: const SparkChartMarker(
+                      displayMode: SparkChartMarkerDisplayMode.all),
+                  //Enable data label
+                  labelDisplayMode: SparkChartLabelDisplayMode.all,
+                  xValueMapper: (int index) => chartData[index].nalJja,
+                  yValueMapper: (int index) => chartData[index].whetSu,
+                  dataCount: 5,
+                ),
+              ),
+            ), // -----------안되는 코드 끝
           ],
         ),
         floatingActionButton: FloatingActionButton(
