@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+//import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class ListScreenPage extends StatefulWidget {
   const ListScreenPage({super.key});
@@ -12,12 +12,11 @@ class ListScreenPage extends StatefulWidget {
 
 class _ListScreenPageState extends State<ListScreenPage> {
   final DBHelper dbHelper = DBHelper();
-  var chartData;
+  List<DayRecords> chartData = <DayRecords>[];
 
   //var items = List<String>.generate(100, (i) => 'Item $i');
   Future<List<DayRecords>> callAllrecord() async {
-    chartData = await dbHelper.getAllRecord();
-    return chartData;
+    return await dbHelper.getAllRecord();
   }
 
   void viewRecord() {
@@ -87,11 +86,17 @@ class _ListScreenPageState extends State<ListScreenPage> {
           title: const Text(
             '호흡수 측정기록',
           ),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.of(this.context).pop();
+              },
+              icon: const Icon(Icons.arrow_circle_left_rounded),
+          iconSize: 20,),
           actions: [
             IconButton(
               iconSize: 35,
               onPressed: () {
-                print('${dbHelper.getAllRecord()}');
+
               },
               icon: const Icon(Icons.delete),
             ),
@@ -101,58 +106,38 @@ class _ListScreenPageState extends State<ListScreenPage> {
         ),
         body: Column(
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: Text('Record List'),
-            ),
             Expanded(
               child: callListBuilder(),
             ),
-            SfCartesianChart(
-                // --------안되는 코드 시작
-                primaryXAxis: CategoryAxis(),
-                title: ChartTitle(text: 'SRR'),
-                legend: Legend(isVisible: true),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: <ChartSeries<DayRecords, String>>[
-                  LineSeries<DayRecords, String>(
-                    dataSource: chartData!,
-                    xValueMapper: (DayRecords day, _) => day.nalJja,
-                    yValueMapper: (DayRecords count, _) =>
-                        int.parse(count.whetSu),
-                    name: '횟수',
-                    // Enable data label
-                    dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  ),
-                ]),
+            ElevatedButton(
+                onPressed: () async {
+                  chartData = await dbHelper.getAllRecord();
+                  setState(() {});
+                },
+                child: Text('그래프보기')),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                //Initialize the spark charts widget
-                child: SfSparkLineChart.custom(
-                  //Enable the trackball
-                  trackball: const SparkChartTrackball(
-                      activationMode: SparkChartActivationMode.tap),
-                  //Enable marker
-                  marker: const SparkChartMarker(
-                      displayMode: SparkChartMarkerDisplayMode.all),
-                  //Enable data label
-                  labelDisplayMode: SparkChartLabelDisplayMode.all,
-                  xValueMapper: (int index) => chartData[index].nalJja,
-                  yValueMapper: (int index) => chartData[index].whetSu,
-                  dataCount: 5,
-                ),
-              ),
-            ), // -----------안되는 코드 끝
+              child: SfCartesianChart(
+                  // --------안되는 코드 시작
+                  primaryXAxis: CategoryAxis(),
+                  //title: ChartTitle(text: 'SRR'),
+                  legend: Legend(isVisible: true),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <ChartSeries<DayRecords, String>>[
+                    LineSeries<DayRecords, String>(
+                      dataSource: chartData,
+                      xValueMapper: (DayRecords day, _) =>
+                          day.nalJja.toString(),
+                      yValueMapper: (DayRecords count, _) =>
+                          int.parse(count.whetSu),
+                      name: 'SRR',
+                      // Enable data label
+                      dataLabelSettings:
+                          const DataLabelSettings(isVisible: true),
+                    ),
+                  ]),
+            ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.backspace),
-          onPressed: () {
-            Navigator.of(this.context).pop();
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
