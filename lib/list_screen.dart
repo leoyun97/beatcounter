@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 //import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class ListScreenPage extends StatefulWidget {
@@ -13,13 +14,57 @@ class ListScreenPage extends StatefulWidget {
 class _ListScreenPageState extends State<ListScreenPage> {
   final DBHelper dbHelper = DBHelper();
   List<DayRecords> chartData = <DayRecords>[];
+  late ZoomPanBehavior _zoomPanBehavior;
 
-  //var items = List<String>.generate(100, (i) => 'Item $i');
+  @override
+  void initState() {
+    siJacfuc();
+
+    _zoomPanBehavior = ZoomPanBehavior(
+      enablePinching: true,
+      enablePanning: true,
+    );
+
+    super.initState();
+  }
+
+  void siJacfuc() async {
+    chartData = await dbHelper.getAllRecord();
+    setState(() {});
+  }
+
+  void showAlert() {
+    showDialog(
+      context: this.context,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Text('측정된 기록 모두를 삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(this.context).pop();
+                dbHelper.deleteAllRecord();
+              },
+              child: const Text('모두삭제'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(this.context).pop();
+              },
+              child: const Text('취소'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<List<DayRecords>> callAllrecord() async {
     return await dbHelper.getAllRecord();
   }
 
-  void viewRecord() {
+  /*  void viewRecord() {
     dbHelper.getAllRecord().then(
           (value) => value.forEach(
             (element) {
@@ -28,7 +73,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
             },
           ),
         );
-  }
+  } */
 
   Widget callListBuilder() {
     return FutureBuilder(
@@ -42,27 +87,35 @@ class _ListScreenPageState extends State<ListScreenPage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  // Padding(
-                  //   padding: EdgeInsets.all(10),
-                  //   child: Text(
-                  //     dayRecords.id.toString(),
-                  //     style: TextStyle(fontSize: 20),
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      dayRecords.nalJja.toString(),
+                      dayRecords.id.toString(),
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w400),
+                        fontSize: 20,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      dayRecords.nalJja.toString(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Color.fromARGB(255, 117, 117, 117),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
                     child: Text(
                       dayRecords.whetSu.toString(),
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w400),
+                        fontSize: 20,
+                        color: Color.fromARGB(255, 117, 117, 117),
+                      ),
                     ),
                   ),
                 ],
@@ -87,17 +140,16 @@ class _ListScreenPageState extends State<ListScreenPage> {
             '호흡수 측정기록',
           ),
           leading: IconButton(
-              onPressed: () {
-                Navigator.of(this.context).pop();
-              },
-              icon: const Icon(Icons.arrow_circle_left_rounded),
-          iconSize: 20,),
+            onPressed: () {
+              Navigator.of(this.context).pop();
+            },
+            icon: const Icon(Icons.arrow_circle_left_rounded),
+            iconSize: 30,
+          ),
           actions: [
             IconButton(
               iconSize: 35,
-              onPressed: () {
-
-              },
+              onPressed: () => showAlert(),
               icon: const Icon(Icons.delete),
             ),
           ],
@@ -105,36 +157,53 @@ class _ListScreenPageState extends State<ListScreenPage> {
           backgroundColor: Colors.black,
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Expanded(
-              child: callListBuilder(),
+            const Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Text(
+                '1분당 호흡수 리스트',
+                style: TextStyle(
+                    fontSize: 15, color: Color.fromARGB(255, 117, 117, 119)),
+              ),
             ),
-            ElevatedButton(
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: callListBuilder(),
+              ), //callListBuilder(),
+            ),
+            /* ElevatedButton(
                 onPressed: () async {
                   chartData = await dbHelper.getAllRecord();
                   setState(() {});
                 },
-                child: Text('그래프보기')),
+                child: Text('그래프보기')), */
             Expanded(
               child: SfCartesianChart(
-                  // --------안되는 코드 시작
-                  primaryXAxis: CategoryAxis(),
-                  //title: ChartTitle(text: 'SRR'),
-                  legend: Legend(isVisible: true),
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: <ChartSeries<DayRecords, String>>[
-                    LineSeries<DayRecords, String>(
-                      dataSource: chartData,
-                      xValueMapper: (DayRecords day, _) =>
-                          day.nalJja.toString(),
-                      yValueMapper: (DayRecords count, _) =>
-                          int.parse(count.whetSu),
-                      name: 'SRR',
-                      // Enable data label
-                      dataLabelSettings:
-                          const DataLabelSettings(isVisible: true),
-                    ),
-                  ]),
+                zoomPanBehavior: _zoomPanBehavior,
+                primaryXAxis: CategoryAxis(),
+                title: ChartTitle(
+                  text: 'Graph',
+                  textStyle: const TextStyle(
+                    color: Color.fromARGB(255, 117, 117, 119),
+                  ),
+                ),
+                borderColor: Color.fromARGB(255, 26, 31, 172),
+                legend: Legend(isVisible: true),
+                tooltipBehavior: TooltipBehavior(enable: true),
+                series: <ChartSeries<DayRecords, String>>[
+                  LineSeries<DayRecords, String>(
+                    dataSource: chartData,
+                    xValueMapper: (DayRecords day, _) => day.nalJja.toString(),
+                    yValueMapper: (DayRecords count, _) =>
+                        int.parse(count.whetSu),
+                    name: 'SRR',
+                    // Enable data label
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
