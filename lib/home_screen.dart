@@ -28,13 +28,17 @@ class _home_screenState extends State<home_screen> {
   bool isnullbpm = true; // 초기 입력값이 null일 경우
   bool btnVisible = false; // 저장버튼 보이기
   bool btnVisibleRef = false;
+  bool startClick = true;
+  bool clickedOrNot = true; //클릭할때마다 버튼 모양 바꾸기
   bool underFive = true; // 깊이 잠들었을때 클릭하라는 멘트 보이기
   List clickB = [];
-  List clickTotal = [];
+  List clickTotal = []; //클릭 때마다 추가되는 데이타 리스트
   Color txtColor = Colors.black.withOpacity(0.6);
   final DBHelper dbHelper = DBHelper();
 
   void clickButton() {
+    isnullbpm = false;
+
     DateTime dt = DateTime.now();
     clickB.add(dt);
 
@@ -45,9 +49,11 @@ class _home_screenState extends State<home_screen> {
       Duration diffSec = endTime.difference(startTime);
       bpm = diffSec.inMilliseconds; //밀리세컨으로 변환해서
       bpermin = 60000 / bpm; //1분의 밀리세컨을 bpm으로 나눠서 횟수 구함
+
       bpermin = bpermin.ceil().toString(); // ceil-> 반올림 함수 사용
+
       clickB.removeAt(0); //배열에서 첫번째값을 삭제
-      isnullbpm = false;
+      startClick = true;
 
       clickTotal.add(double.parse(bpermin));
       if (clickTotal.length == 5) {
@@ -72,9 +78,7 @@ class _home_screenState extends State<home_screen> {
           txtColor = const Color.fromARGB(248, 245, 55, 84);
           btnVisible = true;
         }
-      }
-      //else if (clickTotal.length == 6) {btnVisible = false;}
-      else if (clickTotal.length == 10) {
+      } else if (clickTotal.length == 10) {
         eveFive = clickTotal.reduce((value, element) => value + element) / 10;
         eveFives = eveFive.ceil().toString();
         timesPermin = clickTotal.length;
@@ -101,9 +105,11 @@ class _home_screenState extends State<home_screen> {
         clickRefresh();
       }
     } else if (clickB.length == 1) {
-      isnullbpm = true;
+      startClick = false;
       btnVisibleRef = true;
+      bpermin = 'START';
     }
+
     //print(clickTotal.toList()); //Delete
     setState(() {});
   }
@@ -121,9 +127,31 @@ class _home_screenState extends State<home_screen> {
       txtColor = Colors.black.withOpacity(0.6);
       btnVisible = false;
       btnVisibleRef = false;
-
-      //dbHelper.deleteAllRecord();
+      startClick = true;
     });
+  }
+
+  void clickedBtn() {
+    setState(
+      () {
+        if (clickedOrNot == true) {
+          clickedOrNot == false;
+        } else if (clickedOrNot == false) {
+          clickedOrNot == true;
+        }
+      },
+    );
+  }
+
+  void viewRecord() {
+    dbHelper.getAllRecord().then(
+          (value) => value.forEach(
+            (element) {
+              print(
+                  'id:${element.id}\n 호흡수:${element.whetSu}\n 날짜:${element.nalJja}');
+            },
+          ),
+        );
   }
 
   void insertRecord() async {
@@ -155,7 +183,7 @@ class _home_screenState extends State<home_screen> {
       context,
       MaterialPageRoute(
         builder: (context) => const ListScreenPage(),
-        fullscreenDialog: true,
+        fullscreenDialog: false,
       ),
     );
   }
@@ -206,8 +234,8 @@ class _home_screenState extends State<home_screen> {
           backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () => gotoPage(),
-            icon: const Icon(Icons.list_alt),
-            iconSize: 35,
+            icon: const Icon(Icons.insert_chart_outlined_rounded),
+            iconSize: 40,
           ),
           /*actions: [
             IconButton(
@@ -224,7 +252,7 @@ class _home_screenState extends State<home_screen> {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(30.0),
+                    padding: const EdgeInsets.fromLTRB(30.0, 80.0, 30.0, 50.0),
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -236,19 +264,28 @@ class _home_screenState extends State<home_screen> {
                         ),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      child: Text(
-                        isnullbpm ? "0" : "$bpermin",
-                        style: const TextStyle(
-                          fontSize: 90,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      child: SizedBox(
+                        height: 100,
+                        child: Text(
+                          isnullbpm ? "0" : "$bpermin",
+                          style: startClick
+                              ? const TextStyle(
+                                  fontSize: 90,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                )
+                              : const TextStyle(
+                                  fontSize: 60,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 220, 104, 104),
+                                ),
                         ),
                       ),
                     ),
                   ),
                   Text(
                     underFive
-                        ? "깊게 잠들었을 때 아래 버튼을 호흡에 맞춰 탭하세요."
+                        ? "깊게 잠들었을 때 들숨일때만 아래 버튼을 탭하세요."
                         : "$timesPermin회 평균: $eveFives회/분, $txtChange",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -298,12 +335,17 @@ class _home_screenState extends State<home_screen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     iconSize: 300,
                     icon: Icon(
-                      Icons.monitor_heart_rounded,
+                      clickedOrNot
+                          ? Icons.monitor_heart
+                          : Icons.monitor_heart_outlined,
                       weight: 0.1,
                       color: const Color.fromARGB(255, 241, 128, 137)
                           .withOpacity(0.6),
                     ),
-                    onPressed: clickButton,
+                    onPressed: () {
+                      clickButton();
+                      clickedBtn();
+                    },
                   ),
                 ],
               ),

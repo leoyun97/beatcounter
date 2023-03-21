@@ -117,7 +117,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
                     child: Text(
                       dayRecords.id.toString(),
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         fontStyle: FontStyle.italic,
                         color: Colors.grey,
                       ),
@@ -138,7 +138,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
                     child: Text(
                       '${dayRecords.whetSu} 회/분',
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         color: Color.fromARGB(255, 117, 117, 117),
                       ),
                     ),
@@ -188,8 +188,8 @@ class _ListScreenPageState extends State<ListScreenPage> {
             onPressed: () {
               Navigator.of(this.context).pop();
             },
-            icon: const Icon(Icons.arrow_circle_left_rounded),
-            iconSize: 30,
+            icon: const Icon(Icons.arrow_back_rounded),
+            iconSize: 35,
           ),
           actions: <Widget>[
             PopupMenuButton<int>(
