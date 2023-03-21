@@ -217,96 +217,98 @@ class _home_screenState extends State<home_screen> {
             ),
           ],*/
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color.fromARGB(255, 197, 198, 197)
-                            .withOpacity(0.6),
-                        style: BorderStyle.solid,
-                        width: 10,
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 197, 198, 197)
+                              .withOpacity(0.6),
+                          style: BorderStyle.solid,
+                          width: 10,
+                        ),
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Text(
-                      isnullbpm ? "0" : "$bpermin",
-                      style: const TextStyle(
-                        fontSize: 90,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-                Text(
-                  underFive
-                      ? "깊게 잠들었을 때 아래 버튼을 호흡에 맞춰 탭하세요."
-                      : "$timesPermin회 평균: $eveFives회/분, $txtChange",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: txtColor,
-                    fontSize: 16,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Visibility(
-                      maintainState: true,
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      visible: btnVisible,
-                      child: ElevatedButton(
-                        onPressed: () => showAlert(), //insertRecord,
-                        child: const Text(
-                          '저장',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 20,
-                          ),
+                      child: Text(
+                        isnullbpm ? "0" : "$bpermin",
+                        style: const TextStyle(
+                          fontSize: 90,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                     ),
-                    Visibility(
-                      maintainAnimation: true,
-                      maintainSize: true,
-                      maintainState: true,
-                      visible: btnVisibleRef,
-                      child: IconButton(
-                        color: Colors.black.withOpacity(0.6),
-                        iconSize: 50,
-                        onPressed: () => clickRefresh(),
-                        icon: const Icon(Icons.refresh),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  iconSize: 300,
-                  icon: Icon(
-                    Icons.monitor_heart_rounded,
-                    weight: 0.1,
-                    color: const Color.fromARGB(255, 241, 128, 137)
-                        .withOpacity(0.6),
                   ),
-                  onPressed: clickButton,
-                ),
-              ],
-            ),
-          ],
+                  Text(
+                    underFive
+                        ? "깊게 잠들었을 때 아래 버튼을 호흡에 맞춰 탭하세요."
+                        : "$timesPermin회 평균: $eveFives회/분, $txtChange",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: txtColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Visibility(
+                        maintainState: true,
+                        maintainSize: true,
+                        maintainAnimation: true,
+                        visible: btnVisible,
+                        child: ElevatedButton(
+                          onPressed: () => showAlert(), //insertRecord,
+                          child: const Text(
+                            '저장',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        maintainAnimation: true,
+                        maintainSize: true,
+                        maintainState: true,
+                        visible: btnVisibleRef,
+                        child: IconButton(
+                          color: Colors.black.withOpacity(0.6),
+                          iconSize: 50,
+                          onPressed: () => clickRefresh(),
+                          icon: const Icon(Icons.refresh),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    iconSize: 300,
+                    icon: Icon(
+                      Icons.monitor_heart_rounded,
+                      weight: 0.1,
+                      color: const Color.fromARGB(255, 241, 128, 137)
+                          .withOpacity(0.6),
+                    ),
+                    onPressed: clickButton,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         /*bottomNavigationBar: BottomNavigationBar(items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
