@@ -122,8 +122,17 @@ class DBHelper {
   Future<String> getDBrawcount() async {
     //int rawCount;
     final db = await database;
+    var res = await db.rawQuery('SELECT * FROM $TableName');
+    String rawCount = res.last['id'].toString(); //카운트 숫자만 가져옴
+    return rawCount;
+  }
+
+  Future<String> getDBIntactRawcount() async {
+    //삭제전 전체 카운트
+    //int rawCount;
+    final db = await database;
     var res = await db.rawQuery('SELECT COUNT (*) FROM $TableName');
-    String rawCount = Sqflite.firstIntValue(res).toString();
+    String rawCount = Sqflite.firstIntValue(res).toString(); //카운트 숫자만 가져옴
     return rawCount;
   }
 }

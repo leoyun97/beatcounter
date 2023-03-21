@@ -131,7 +131,7 @@ class _home_screenState extends State<home_screen> {
     String dt = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
     String rawCount = await dbHelper.getDBrawcount();
-    rawCounts = int.parse(rawCount);
+    rawCounts = int.parse(rawCount) + 1;
 
     dbHelper.insertRecord(
       DayRecords(
@@ -150,11 +150,9 @@ class _home_screenState extends State<home_screen> {
     dbHelper.deleteAllRecord();
   }
 
-
-
   void gotoPage() {
     Navigator.push(
-      this.context,
+      context,
       MaterialPageRoute(
         builder: (context) => const ListScreenPage(),
         fullscreenDialog: true,
@@ -164,7 +162,7 @@ class _home_screenState extends State<home_screen> {
 
   void showAlert() {
     showDialog(
-      context: this.context,
+      context: context,
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return AlertDialog(
@@ -172,14 +170,14 @@ class _home_screenState extends State<home_screen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop();
+                Navigator.of(context).pop();
                 insertRecord();
               },
               child: const Text('저장'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop();
+                Navigator.of(context).pop();
               },
               child: const Text('취소'),
             ),
@@ -208,16 +206,16 @@ class _home_screenState extends State<home_screen> {
           backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () => gotoPage(),
-            icon: Icon(Icons.list_alt),
+            icon: const Icon(Icons.list_alt),
             iconSize: 35,
           ),
-          actions: [
+          /*actions: [
             IconButton(
               iconSize: 35,
               onPressed: () {},
               icon: const Icon(Icons.list),
             ),
-          ],
+          ],*/
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -265,11 +263,16 @@ class _home_screenState extends State<home_screen> {
                       maintainSize: true,
                       maintainAnimation: true,
                       visible: btnVisible,
-                      child: IconButton(
+                      child: ElevatedButton(
                         onPressed: () => showAlert(), //insertRecord,
-                        icon: const Icon(Icons.save_alt_rounded),
-                        color: Colors.black,
-                        iconSize: 35,
+                        child: const Text(
+                          '저장',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 20,
+                          ),
+                        ),
                       ),
                     ),
                     Visibility(
@@ -305,11 +308,11 @@ class _home_screenState extends State<home_screen> {
             ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(items: const [
+        /*bottomNavigationBar: BottomNavigationBar(items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
           BottomNavigationBarItem(icon: Icon(Icons.business), label: 'A'),
           BottomNavigationBarItem(icon: Icon(Icons.forward), label: 'Next'),
-        ]),
+        ]),*/
       ),
     );
   }

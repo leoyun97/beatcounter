@@ -1,3 +1,4 @@
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -15,6 +16,8 @@ class _ListScreenPageState extends State<ListScreenPage> {
   final DBHelper dbHelper = DBHelper();
   List<DayRecords> chartData = <DayRecords>[];
   late ZoomPanBehavior _zoomPanBehavior;
+  bool delAll = true;
+  late int delIndex;
 
   @override
   void initState() {
@@ -33,24 +36,46 @@ class _ListScreenPageState extends State<ListScreenPage> {
     setState(() {});
   }
 
-  void showAlert() {
+  void reloadPage() {
+    Navigator.pop(context);
+  }
+
+  void delSelection(int item) {
+    switch (item) {
+      case 0:
+        delAll = true;
+        delAllorNot();
+        break;
+      case 1:
+        delAll = false;
+        break;
+    }
+    setState(() {});
+  }
+
+  void delAllorNot() {
     showDialog(
-      context: this.context,
+      context: context,
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          content: Text('측정된 기록 모두를 삭제하시겠습니까?'),
+          content: delAll
+              ? const Text('측정된 기록 모두를 삭제하고 데이터를 초기화 하시겠습니까?')
+              : Text('$delIndex번째 기록을 삭제하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop();
-                dbHelper.deleteAllRecord();
+                Navigator.of(context).pop();
+                delAll
+                    ? dbHelper.deleteAllRecord()
+                    : dbHelper.deleteRecord(delIndex);
+                reloadPage();
               },
-              child: const Text('모두삭제'),
+              child: const Text('삭제'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop();
+                Navigator.of(context).pop();
               },
               child: const Text('취소'),
             ),
@@ -88,7 +113,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
                     child: Text(
                       dayRecords.id.toString(),
                       style: const TextStyle(
@@ -103,7 +128,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
                     child: Text(
                       dayRecords.nalJja.toString(),
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         color: Color.fromARGB(255, 117, 117, 117),
                       ),
                     ),
@@ -111,10 +136,30 @@ class _ListScreenPageState extends State<ListScreenPage> {
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      dayRecords.whetSu.toString(),
+                      '${dayRecords.whetSu} 회/분',
                       style: const TextStyle(
                         fontSize: 20,
                         color: Color.fromARGB(255, 117, 117, 117),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Visibility(
+                      //maintainAnimation: true,
+                      //maintainSize: true,
+                      //maintainState: true,
+                      visible: delAll ? false : true,
+                      child: TextButton(
+                        child: const Text(
+                          '삭제',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          delIndex = dayRecords.id;
+                          delAll = false;
+                          delAllorNot();
+                        },
                       ),
                     ),
                   ),
@@ -146,11 +191,19 @@ class _ListScreenPageState extends State<ListScreenPage> {
             icon: const Icon(Icons.arrow_circle_left_rounded),
             iconSize: 30,
           ),
-          actions: [
-            IconButton(
-              iconSize: 35,
-              onPressed: () => showAlert(),
-              icon: const Icon(Icons.delete),
+          actions: <Widget>[
+            PopupMenuButton<int>(
+              onSelected: (item) => delSelection(item),
+              itemBuilder: (context) => [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text('모두삭제'),
+                ),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Text('삭제'),
+                )
+              ],
             ),
           ],
           centerTitle: true,
@@ -168,18 +221,6 @@ class _ListScreenPageState extends State<ListScreenPage> {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: callListBuilder(),
-              ), //callListBuilder(),
-            ),
-            /* ElevatedButton(
-                onPressed: () async {
-                  chartData = await dbHelper.getAllRecord();
-                  setState(() {});
-                },
-                child: Text('그래프보기')), */
-            Expanded(
               child: SfCartesianChart(
                 zoomPanBehavior: _zoomPanBehavior,
                 primaryXAxis: CategoryAxis(),
@@ -189,8 +230,8 @@ class _ListScreenPageState extends State<ListScreenPage> {
                     color: Color.fromARGB(255, 117, 117, 119),
                   ),
                 ),
-                borderColor: Color.fromARGB(255, 26, 31, 172),
-                legend: Legend(isVisible: true),
+                borderColor: const Color.fromARGB(255, 26, 31, 172),
+                legend: Legend(isVisible: false),
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: <ChartSeries<DayRecords, String>>[
                   LineSeries<DayRecords, String>(
@@ -204,6 +245,12 @@ class _ListScreenPageState extends State<ListScreenPage> {
                   ),
                 ],
               ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: callListBuilder(),
+              ), //callListBuilder(),
             ),
           ],
         ),
