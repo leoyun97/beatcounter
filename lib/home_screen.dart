@@ -131,18 +131,6 @@ class _home_screenState extends State<home_screen> {
     });
   }
 
-  void clickedBtn() {
-    setState(
-      () {
-        if (clickedOrNot == true) {
-          clickedOrNot == false;
-        } else if (clickedOrNot == false) {
-          clickedOrNot == true;
-        }
-      },
-    );
-  }
-
   void viewRecord() {
     dbHelper.getAllRecord().then(
           (value) => value.forEach(
@@ -225,10 +213,11 @@ class _home_screenState extends State<home_screen> {
     return MaterialApp(
       title: 'SRR측정보조',
       home: Scaffold(
-        //backgroundColor: Colors.black,
+        backgroundColor:
+            const Color.fromARGB(255, 245, 241, 241).withOpacity(0.9),
         appBar: AppBar(
           title: const Text(
-            '호흡수 측정',
+            '호흡수 측정(SRR)',
           ),
           centerTitle: true,
           backgroundColor: Colors.black,
@@ -331,21 +320,31 @@ class _home_screenState extends State<home_screen> {
               ),
               Column(
                 children: [
-                  IconButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    iconSize: 300,
-                    icon: Icon(
-                      clickedOrNot
-                          ? Icons.monitor_heart
-                          : Icons.monitor_heart_outlined,
-                      weight: 0.1,
-                      color: const Color.fromARGB(255, 241, 128, 137)
-                          .withOpacity(0.6),
+                  AnimatedOpacity(
+                    opacity: clickedOrNot ? 1.0 : 0.5,
+                    duration: Duration(milliseconds: 300),
+                    child: IconButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      iconSize: 300,
+                      icon: Icon(
+                        clickedOrNot
+                            ? Icons.monitor_heart
+                            : Icons.monitor_heart_outlined,
+                        weight: 0.1,
+                        color: const Color.fromARGB(255, 241, 128, 137)
+                            .withOpacity(0.6),
+                      ),
+                      onPressed: () {
+                        clickButton();
+                        setState(() {
+                          clickedOrNot = !clickedOrNot;
+                        });
+
+                        // clickedBtn();
+
+                        // print(clickedOrNot);
+                      },
                     ),
-                    onPressed: () {
-                      clickButton();
-                      clickedBtn();
-                    },
                   ),
                 ],
               ),

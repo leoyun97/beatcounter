@@ -180,6 +180,8 @@ class _ListScreenPageState extends State<ListScreenPage> {
     return MaterialApp(
       title: '리스트',
       home: Scaffold(
+        backgroundColor:
+            const Color.fromARGB(255, 245, 241, 241).withOpacity(0.9),
         appBar: AppBar(
           title: const Text(
             '호흡수 측정기록',
@@ -212,14 +214,14 @@ class _ListScreenPageState extends State<ListScreenPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            const Padding(
+            /*const Padding(
               padding: EdgeInsets.all(5.0),
               child: Text(
                 '1분당 호흡수 리스트',
                 style: TextStyle(
                     fontSize: 15, color: Color.fromARGB(255, 117, 117, 119)),
               ),
-            ),
+            ),*/
             Expanded(
               child: SfCartesianChart(
                 zoomPanBehavior: _zoomPanBehavior,
@@ -230,6 +232,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
                     color: Color.fromARGB(255, 117, 117, 119),
                   ),
                 ),
+                backgroundColor: Color.fromARGB(255, 248, 244, 244),
                 borderColor: const Color.fromARGB(255, 26, 31, 172),
                 legend: Legend(isVisible: false),
                 tooltipBehavior: TooltipBehavior(enable: true),
