@@ -2,6 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter/rendering.dart';
+
+import 'dart:io';
+import 'dart:async';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'dart:convert';
 
 //import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
@@ -36,10 +43,6 @@ class _ListScreenPageState extends State<ListScreenPage> {
     setState(() {});
   }
 
-  void reloadPage() {
-    Navigator.pop(context);
-  }
-
   void delSelection(int item) {
     switch (item) {
       case 0:
@@ -66,10 +69,13 @@ class _ListScreenPageState extends State<ListScreenPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                delAll
-                    ? dbHelper.deleteAllRecord()
-                    : dbHelper.deleteRecord(delIndex);
-                reloadPage();
+                setState(() {
+                  delAll
+                      ? dbHelper.deleteAllRecord()
+                      : dbHelper.deleteRecord(delIndex);
+                });
+
+                // reloadPage();
               },
               child: const Text('삭제'),
             ),
