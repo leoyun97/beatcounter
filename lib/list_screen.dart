@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:beatcounter/recordDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:flutter/rendering.dart';
+//import 'package:flutter/rendering.dart';
 
-import 'dart:io';
+//import 'dart:io';
 import 'dart:async';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
-import 'dart:convert';
+//import 'dart:ui' as ui;
+//import 'dart:typed_data';
+//import 'dart:convert';
 
 //import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
