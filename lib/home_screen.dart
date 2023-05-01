@@ -203,6 +203,34 @@ class _home_screenState extends State<home_screen> {
     );
   }
 
+  void showInform() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          content: Text(style: TextStyle(fontSize: 13,color: Colors.blue),'수면시호흡(SRR)이란 환축이 자고 있을 동안의 호흡수를 의미합니다. 정확한 호흡수 측정을 위해 호흡은 자고 있을때 측정을 권장합니다.\n\n\n'
+              '정상: 수면중 20회/분 이하\n\n'
+              '심장병 있는 환축: 수면중 25회/분 이하면 정상\n\n'
+              '주의 요함(매일측정권장): 수면중 25~30회/분\n\n'
+              '경고단계(병원방문권장): 수면중 30~40회/분\n\n'
+              '위험: 수면중 40회/분이상\n\n'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(style: TextStyle(color: Colors.red),'닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
@@ -226,13 +254,13 @@ class _home_screenState extends State<home_screen> {
             icon: const Icon(Icons.insert_chart_outlined_rounded),
             iconSize: 40,
           ),
-          /*actions: [
+          actions: [
             IconButton(
-              iconSize: 35,
-              onPressed: () {},
-              icon: const Icon(Icons.list),
+              iconSize: 25,
+              onPressed: () => showInform(),
+              icon: const Icon(Icons.question_mark_rounded),
             ),
-          ],*/
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
