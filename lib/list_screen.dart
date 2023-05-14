@@ -231,7 +231,7 @@ class _ListScreenPageState extends State<ListScreenPage> {
             Expanded(
               child: SfCartesianChart(
                 zoomPanBehavior: _zoomPanBehavior,
-                primaryXAxis: CategoryAxis(),
+                primaryXAxis: CategoryAxis(isInversed: true),
                 title: ChartTitle(
                   text: 'Graph',
                   textStyle: const TextStyle(

@@ -67,6 +67,7 @@ class DBHelper {
     //final List<Map<String, dynamic>> maps = await db.query('$TableName');
     final List<Map<String, dynamic>> maps =
         await db.query('$TableName', orderBy: 'id DESC');
+        //await db.query('$TableName');
 
     return List.generate(maps.length, (i) {
       return DayRecords(
