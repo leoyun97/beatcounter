@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 //import 'package:flutter/foundation.dart';
 //import 'package:flutter/gestures.dart';
 //import 'package:path/path.dart';
-//import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
 
 class home_screen extends StatefulWidget {
@@ -209,27 +208,26 @@ class _home_screenState extends State<home_screen> {
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          content: Text(style: TextStyle(fontSize: 13,color: Colors.blue),'수면시호흡(SRR)이란 환축이 자고 있을 동안의 호흡수를 의미합니다. 정확한 호흡수 측정을 위해 호흡은 자고 있을때 측정을 권장합니다.\n\n\n'
+          content: Text(
+              style: TextStyle(fontSize: 13, color: Colors.blue),
+              '수면시호흡(SRR)이란 환축이 자고 있을 동안의 호흡수를 의미합니다. 정확한 호흡수 측정을 위해 호흡은 자고 있을때 측정을 권장합니다.\n\n\n'
               '정상: 수면중 20회/분 이하\n\n'
               '심장병 있는 환축: 수면중 25회/분 이하면 정상\n\n'
               '주의 요함(매일측정권장): 수면중 25~30회/분\n\n'
               '경고단계(병원방문권장): 수면중 30~40회/분\n\n'
-              '위험: 수면중 40회/분이상\n\n'
-          ),
+              '위험: 수면중 40회/분이상\n\n'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(style: TextStyle(color: Colors.red),'닫기'),
+              child: const Text(style: TextStyle(color: Colors.red), '닫기'),
             ),
           ],
         );
       },
     );
   }
-
-
 
   @override
   void setState(VoidCallback fn) {
@@ -350,7 +348,7 @@ class _home_screenState extends State<home_screen> {
                 children: [
                   AnimatedOpacity(
                     opacity: clickedOrNot ? 1.0 : 0.5,
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     child: IconButton(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       iconSize: 300,
